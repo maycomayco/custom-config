@@ -1,0 +1,63 @@
+React Performance: useMemo, useCallback, React.memo
+
+PHILOSOPHY: Don't optimize prematurely. Only use when you have: (1) Measured performance issues (2) Identified the bottleneck (3) Confirmed optimization helps. React is fast by default. Most components don't need memoization.
+
+NOTE: useMemo is a performance HINT, not guarantee. React may forget memoized values to free memory. Code must work correctly without memoization.
+
+useMemo - WHEN TO USE:
+
+- Expensive calculations (measured with React DevTools Profiler)
+- Reference stability when child components/hooks depend on object/array references
+- Large data transformations: filter/map/sort large datasets
+
+useMemo - WHEN NOT TO USE:
+
+- Simple calculations or primitives
+- Objects/arrays already wrapped in useMemo/useState
+- Values that change every render anyway
+- Wrapping every computation "just in case"
+
+BAD EXAMPLES:
+const doubled = useMemo(() => count \* 2, [count]) // primitives don't need it
+const config = useMemo(() => ({ enabled: true }), []) // simple object
+const userMemo = useMemo(() => user, [user]) // user already stable from useState
+const value = useMemo(() => expensiveCalculation(data)) // missing dependency array!
+
+GOOD EXAMPLES:
+const sortedItems = useMemo(() => items.filter(x => x.price > 100).sort((a,b) => b.price - a.price), [items])
+const config = useMemo(() => ({ apiKey: process.env.API_KEY, timeout: 5000 }), [])
+useEffect(() => { fetchData(config) }, [config]) // config won't cause re-runs
+
+ANTI-PATTERNS:
+
+Double wrapping (useless):
+const value = useMemo(() => computeValue(data), [data])
+return useMemo(() => ({ value }), [value]) // NO! Just return { value }
+
+Memoizing everything (over-engineering):
+const a = useMemo(() => 1 + 1, [])
+const b = useMemo(() => a + 1, [a])
+const c = useMemo(() => b + 1, [b]) // This is ridiculous
+
+Wrong dependencies (stale values):
+const value = useMemo(() => compute(data, filter), [data]) // Missing 'filter'!
+
+Unstable dependencies (useless memoization):
+const result = useMemo(() => processData(data), [data, { config: true }]) // Object literal changes every render!
+
+Non-pure calculations (side effects):
+const result = useMemo(() => { setCount(count + 1); return compute(data) }, [data]) // BAD - side effects!
+const result = useMemo(() => compute(data), [data]) // GOOD - pure function
+
+RULES OF THUMB:
+
+1. Measure first, optimize second (use React DevTools Profiler)
+2. Keep calculations pure (no side effects)
+3. One memoization level (don't wrap memoized values)
+4. Check dependencies (ensure array is correct and complete)
+5. Consider alternatives (sometimes restructuring components is better)
+6. Stay consistent (if using memo on parent, use useCallback for callbacks)
+
+WHEN IN DOUBT: Start WITHOUT memoization. Add only when: (1) Slow renders in Profiler (2) Components re-rendering unnecessarily (3) Working with large datasets (>1000 items)
+
+Remember: Premature optimization is the root of all evil. Clear, readable code > micro-optimizations.
