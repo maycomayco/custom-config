@@ -1,0 +1,216 @@
+---
+alwaysApply: true
+globs: *.ts,*.tsx
+---
+
+# React Custom Hooks Best Practices
+
+## When to Create a Custom Hook
+
+A custom hook should encapsulate **reusable logic** that:
+- Manages state and side effects
+- Can be used in multiple components
+- Is independent from presentational UI
+
+**✅ Create a hook:**
+- Pagination logic (`usePagination`)
+- Favorites management (`useFavorites`)
+- Modal control (`useModal`)
+- Search with debounce (`useDebounce`)
+
+**❌ DO NOT create a hook:**
+- Only for rendering JSX (use components instead)
+- Trivial component logic (keep it in the component)
+
+## Custom Hook Structure
+
+### 1. Name with `use` prefix
+```typescript
+// ✅ CORRECT
+export function usePagination<T>(...) { }
+
+// ❌ INCORRECT
+export function getPagination<T>(...) { }
+```
+
+### 2. Typed parameters
+```typescript
+// ✅ CORRECT - Interface with readonly properties
+type UsePaginationParams = {
+    readonly itemsPerPage?: number
+}
+
+export function usePagination<T>(
+    items: T[],
+    { itemsPerPage = 3 }: UsePaginationParams = {}
+) { }
+
+// ❌ INCORRECT
+export function usePagination(items, params) { }
+```
+
+### 3. Explicit Return Type
+```typescript
+// ✅ CORRECT - Returns typed object
+export function useModal<T = void>(): {
+    readonly isOpen: boolean
+    readonly data: T | null
+    readonly open: (value: T) => void
+    readonly close: () => void
+} {
+    // ...
+}
+
+// ❌ INCORRECT - No typing
+export function useModal() {
+    // ...
+}
+```
+
+### 4. Use readonly for immutability
+```typescript
+// ✅ CORRECT
+type UseModalReturn = {
+    readonly isOpen: boolean
+    readonly data: T | null
+    readonly open: (value: T) => void
+}
+
+// ❌ INCORRECT
+type UseModalReturn = {
+    isOpen: boolean
+    data: T | null
+    open: (value: T) => void
+}
+```
+
+## Pattern: Separate Logic from UI
+
+### Smart Hook (Logic)
+```typescript
+// hooks/useModal.ts - Logic only, no UI
+export function useModal<T = void>() {
+    const [isOpen, setIsOpen] = useState(false)
+    const [data, setData] = useState<T | null>(null)
+
+    const open = useCallback((value: T): void => {
+        setData(value)
+        setIsOpen(true)
+    }, [])
+
+    const close = useCallback((): void => {
+        setIsOpen(false)
+        setData(null)
+    }, [])
+
+    return { isOpen, data, open, close }
+}
+```
+
+### Dumb Component (Presentation)
+```typescript
+// components/Modal.tsx - UI only, no logic
+type ModalProps = {
+    readonly isOpen: boolean
+    readonly onClose: () => void
+}
+
+export function Modal({ isOpen, onClose, children }: ModalProps) {
+    if (!isOpen) return null
+    return <div onClick={onClose}>{children}</div>
+}
+```
+
+### Usage in component
+```typescript
+// App.tsx - Orchestrates hook + component
+const modal = useModal<Launch>()
+
+return (
+    <>
+        <button onClick={() => modal.open(launch)}>Open</button>
+        <Modal isOpen={modal.isOpen} onClose={modal.close}>
+            <LaunchDetails launch={modal.data} />
+        </Modal>
+    </>
+)
+```
+
+## Best Practices
+
+### 1. useCallback for returned functions
+```typescript
+// ✅ CORRECT - Prevents unnecessary renders in child components
+const goToPage = useCallback((page: number): void => {
+    const validPage = Math.max(1, Math.min(page, totalPages))
+    setCurrentPage(validPage)
+}, [totalPages])
+
+// ❌ INCORRECT - New function on every render
+const goToPage = (page: number): void => {
+    setCurrentPage(page)
+}
+```
+
+### 2. useMemo for expensive calculations
+```typescript
+// ✅ CORRECT - Memoizes result
+const totalPages = useMemo(() => {
+    return Math.ceil(items.length / itemsPerPage)
+}, [items.length, itemsPerPage])
+
+// ❌ INCORRECT - Recalculates on every render
+const totalPages = Math.ceil(items.length / itemsPerPage)
+```
+
+### 3. Correct dependencies
+```typescript
+// ✅ CORRECT - Includes all dependencies
+useEffect(() => {
+    goToPage(1)
+}, [debouncedSearchQuery, goToPage]) // goToPage is a dependency
+
+// ❌ INCORRECT - Missing dependency
+useEffect(() => {
+    goToPage(1)
+}, [debouncedSearchQuery]) // goToPage is not included
+```
+
+### 4. Rules of Hooks
+```typescript
+// ✅ CORRECT - Top-level (not in conditionals/loops)
+export function useMyHook() {
+    const [state, setState] = useState(0)
+    const memoized = useMemo(() => state * 2, [state])
+    return { state, memoized }
+}
+
+// ❌ INCORRECT - Conditional
+export function useMyHook(condition: boolean) {
+    if (condition) {
+        const [state, setState] = useState(0) // ❌ NO
+    }
+}
+
+// ❌ INCORRECT - In loop
+export function useMyHook(items: string[]) {
+    items.forEach(item => {
+        const [state] = useState(0) // ❌ NO
+    })
+}
+```
+
+## Checklist for Creating a Custom Hook
+
+- [ ] Name starts with `use`
+- [ ] Parameters typed in interface
+- [ ] Explicit return type
+- [ ] Object return properties are `readonly`
+- [ ] Returned functions use `useCallback`
+- [ ] Expensive calculations use `useMemo`
+- [ ] All dependencies are included
+- [ ] No JSX (logic only)
+- [ ] Reusable across multiple components
+- [ ] Documented with comments if complex
+
+## Folder Structure

@@ -61,3 +61,5 @@ RULES OF THUMB:
 WHEN IN DOUBT: Start WITHOUT memoization. Add only when: (1) Slow renders in Profiler (2) Components re-rendering unnecessarily (3) Working with large datasets (>1000 items)
 
 Remember: Premature optimization is the root of all evil. Clear, readable code > micro-optimizations.
+
+For more info: https://react.dev/reference/react/useMemo
