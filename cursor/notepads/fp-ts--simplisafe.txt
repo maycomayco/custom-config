@@ -1,0 +1,48 @@
+FP-TS CODE REVIEW CHECKLIST
+
+1. FUNCTIONAL PATTERNS
+
+1.1 Option
+- O.fromNullable() para null/undefined
+- O.map() para transformaciones
+- O.chain() para flatMap
+- O.getOrElse() para defaults
+- pipe() para composición
+
+1.2 Common Patterns
+- Safe navigation: O.fromNullable → O.chain → O.getOrElse
+- Transformación: pipe → O.map → O.chain
+- Errores: O.match o O.getOrElse
+
+1.3 Anti-Patterns
+- NO checks directos null/undefined
+- NO loops imperativos (usar A.findFirst, A.map)
+- NO mutación (usar operaciones inmutables)
+
+2. CODE QUALITY
+
+2.1 Performance
+- pipe chains: máx 5-6 operaciones
+- ReadonlyArray para eficiencia
+- Evitar cálculos innecesarios en pipe
+
+3. MIGRATION
+
+3.1 BEFORE
+- Identificar riesgos null/undefined
+- Encontrar loops imperativos
+- Localizar try/catch
+- Revisar mutaciones
+
+3.2 DURING
+- Reemplazar ?. con O.fromNullable
+- Loops → A.map/A.filter
+- Condicionales → O.map/O.chain
+- Usar pipe para composición
+- try/catch → O.getOrElse
+
+3.3 AFTER
+- Todas operaciones inmutables
+- Sin checks null/undefined
+- Funciones puras (sin side effects)
+- Errores manejados con Option
