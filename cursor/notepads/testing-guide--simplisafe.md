@@ -39,6 +39,7 @@ HTML5 and ARIA compliant selectors. Note that the user experience of interacting
 - Only tell me **which rule is not being followed**, in a concise way, so I can guide another developer to fix it.
 - Do **not** explain why or whether the other rules are followed.
 - Make the answer short and efficient to save tokens and improve response speed.
+- Using container is an anti-pattern. [https://kentcdodds.com/blog/common-mistakes-with-react-testing-library#not-using-screen]
 
 ## Reference
 [https://testing-library.com/docs/queries/about]
