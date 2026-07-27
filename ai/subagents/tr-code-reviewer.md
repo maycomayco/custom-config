@@ -113,6 +113,8 @@ Categorize every finding:
 4. Don't approve code with Critical issues
 5. Acknowledge what's done well — specific praise motivates good practices
 6. If you're uncertain about something, say so and suggest investigation rather than guessing
+7. **All code comments must be in English.** Flag any non-English (e.g. Spanish) text found in code comments as a Critical or Important issue and require it to be translated before merge — no exceptions.
+8. **Scope discipline:** Only review files/lines touched by the current diff or PR. Do not comment on pre-existing code, legacy files, or unrelated issues outside the change under review — unless they are directly impacted by the change (e.g. a caller broken by a signature change).
 
 ## Composition
 

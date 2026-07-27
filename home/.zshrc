@@ -10,9 +10,8 @@ source $ZSH/oh-my-zsh.sh
 # ─── Environment ──────────────────────────────────────────────────────────
 export EDITOR="code"
 export VISUAL="code"
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-export NODE_OPTIONS="--max-old-space-size=8192"
+# export LANG=en_US.UTF-8
+# export LC_ALL=en_US.UTF-8
 
 # ─── PATH ─────────────────────────────────────────────────────────────────
 export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$PATH"

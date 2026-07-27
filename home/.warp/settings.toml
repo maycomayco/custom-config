@@ -2,13 +2,13 @@
 spacing = "compact"
 
 [appearance.window]
-override_opacity = 90
+override_opacity = 100
 override_blur = 20
 zoom_level = 100
 
 [appearance.text]
-line_height_ratio = 1.2000000476837158
-font_name = "JetBrainsMono Nerd Font Mono"
+line_height_ratio = 1.5
+font_name = "Fira Code"
 enforce_minimum_contrast = "always"
 notebook_font_size = 14.0
 font_size = 15.0
@@ -30,12 +30,13 @@ show_indicators_button = true
 preserve_active_tab_color = false
 
 [appearance.vertical_tabs]
-enabled = false
+enabled = true
 display_granularity = "tabs"
 view_mode = "compact"
 compact_subtitle = "working_directory"
 primary_info = "command"
 show_panel_in_restored_windows = false
+hide_title_bar_search_bar = false
 
 [appearance.blocks]
 show_jump_to_bottom_of_block_button = true
@@ -117,3 +118,12 @@ nld_in_terminal_enabled = true
 
 [agents.warp_agent.other]
 should_render_use_agent_toolbar_for_user_commands = false
+
+[agents.third_party]
+should_render_cli_agent_toolbar = false
+
+[code]
+
+[code.editor]
+show_global_search = false
+show_hidden_files = false
