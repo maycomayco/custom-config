@@ -9,6 +9,10 @@ brew "mole"
 brew "nss"
 brew "fzf"
 brew "zoxide"
+# Syntax-highlighting pager for git and diff output
+brew "git-delta"
+# Polyglot runtime manager (asdf rust clone)
+brew "mise"
 # Cross-shell prompt for astronauts
 brew "starship"
 # Fish-like fast/unobtrusive autosuggestions for zsh
@@ -34,7 +38,9 @@ cask "figma"
 # Font for programming and terminal usage
 cask "font-monaspace"
 cask "font-geist-mono-nerd-font"
-cask "font-jetbrains-mono"
+cask "font-hack-nerd-font"
+cask "font-jetbrains-mono-nerd-font"
+cask "font-sf-mono-nerd-font-ligaturized"
 # Utility to hide menu bar items
 cask "hiddenbar"
 # Menu bar calendar
@@ -54,3 +60,7 @@ cask "warp"
 cask "visual-studio-code"
 cask "orbstack"
 cask "deepl"
+# Open-source web browser
+cask "chromium"
+# Control your computer with quick actions
+cask "raycast"
